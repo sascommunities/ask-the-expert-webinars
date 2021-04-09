@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<head>
+<title>Viya Example</title>
+</head>
+<body>
+<h1>Hello! Click the Button Below to Run Code on SAS Viya!</h1>
+<form action="/SASJobExecution/"  target="_blank">
+<input type="hidden" name="_program" value="/Users/jofurb/JESWebinar/04-ViyaProcRegselect_UI">
+<input type="hidden" name="_action" value="execute">
+<br/>
+<select name="DIV">
+  <option value="AE">American League East</option>
+  <option value="AW">American League West</option>
+  <option value="NE">National League East</option>
+  <option value="NW">National League West</option>
+</select>
+<p>
+<input type="submit" value="Run SAS Viya code">
+</form>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<html>
+<head>
+<link rel="stylesheet" href="/SASJobExecution/theme">
+</head>
+<body>
+<h1 class="jobexec_sample_name">Creating JES Prompts and Output Using the Viya Reports API</h1>
+<p>
+The prompt below contains the 10 most recently created VA reports. 
+<br><br>
+To view a report's graph Elements, make a seletion and press 'submit'
+</p>
+	<p>
+		<form action="javascript:submitForm();">
+				<div id="reportList"></div>
+			</nbsp>
+			</nbsp>
+			<p></p>
+			<input type="submit">
+		</form>
+		<center>
+			<div id="JobResults"></div>
+		</center>
+</body>
+<script>
+// make request to reports API
+var xmlhttp = new XMLHttpRequest();
+var url = "/reports/reports?limit=10&sortBy=creationTimeStamp:descending";
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var myArr = JSON.parse(this.responseText);
+        createSelection(myArr);
+    }
+    else {
+    	document.getElementById("reportList").innerHTML = "Status: " + this.status;
+	}
+}
+
+xmlhttp.open("GET", url);
+xmlhttp.send();
+// Display a temporary message in the DIV
+document.getElementById("reportList").innerHTML = "Please wait ... ";
+
+// convert response into a dropdown
+function createSelection(rList) {
+    var prompt = '<select name="reportSelect">';
+    var i;
+    for(i = 0; i < rList['items'].length; i++) {
+        prompt += '<OPTION VALUE="' + rList['items'][i].id + '">' +
+        rList['items'][i].name;
+    }
+    prompt += '</select>'
+    document.getElementById("reportList").innerHTML = prompt;
+}
+function submitForm() {
+	var formData = new FormData();
+	formData.append("JESParameter", document.querySelector('[name="reportSelect"]').value);
+	formData.append("_program", "$PROGRAM$");
+	formData.append("_action", "execute");
+	formData.append('_csrf', "$CSRF$");
+
+	var request = new XMLHttpRequest();
+	request.addEventListener("error", function (event) {
+		alert("Something went wrong.");
+	});
+	request.onreadystatechange = function () {
+		if (this.readyState == 4) {
+			if (this.status == 200) {
+				document.getElementById("JobResults").innerHTML = this.responseText;
+			}
+			else {
+				document.getElementById("JobResults").innerHTML = "Status: " + this.status;
+			}
+		}
+	};
+	request.open("post", "/SASJobExecution/");
+	request.send(formData);
+
+	// Display a temporary message in the DIV
+	document.getElementById("JobResults").innerHTML = "Please wait ... ";
+}
+</script>
+</html>

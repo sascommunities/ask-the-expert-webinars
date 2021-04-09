@@ -1,0 +1,52 @@
+<html>
+
+<head>
+	<script>
+		function submitForm() {
+			var formData = new FormData();
+			formData.append("genderParameter", document.querySelector('[name="genderSelect"]').value);
+			formData.append("_program", "/Users/jofurb/JESWebinar/01-simpleProgram");
+			formData.append("_action", "execute");
+			formData.append('_csrf', "$CSRF$");
+
+			var request = new XMLHttpRequest();
+			request.addEventListener("error", function (event) {
+				alert("Something went wrong.");
+			});
+			request.onreadystatechange = function () {
+				if (this.readyState == 4) {
+					if (this.status == 200) {
+						document.getElementById("JobResults").innerHTML = this.responseText;
+					}
+					else {
+						document.getElementById("JobResults").innerHTML = "Status: " + this.status;
+					}
+				}
+			};
+			request.open("post", "/SASJobExecution/");
+			request.send(formData);
+
+			// Display a temporary message in the DIV
+			document.getElementById("JobResults").innerHTML = "Please wait ... ";
+		}
+	</script>
+</head>
+
+<body>
+	<H2>Please select a gender: </H2>
+	<p>
+		<form action="javascript:submitForm();">
+			<select name="genderSelect">
+				<OPTION VALUE="M">Males
+				<OPTION VALUE="F">Females
+			</select>
+			</nbsp>
+			</nbsp>
+			<input type="submit">
+		</form>
+		<center>
+			<div id="JobResults"></div>
+		</center>
+</body>
+
+</html>
